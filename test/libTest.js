@@ -1,19 +1,7 @@
 const assert = require('assert');
 const { 
-  boardGenerator,
-  createInitialBoard } = require('../src/lib.js');
-
-describe("boardGenerator", function() {
-  it("should return a Array of Arrays of same given length", function() {
-    let result = [ [ 'dead', 'dead' ], [ 'dead', 'dead' ] ];
-    assert.deepEqual(boardGenerator(2), result);
-  });
-
-  it("should return a Array of Arrays of same given length", function() {
-    let result = [ [ 'dead', 'dead', 'dead' ],[ 'dead', 'dead', 'dead' ],[ 'dead', 'dead', 'dead' ] ]
-    assert.deepEqual(boardGenerator(3), result);
-  });
-});
+  createInitialBoard,
+  findNeighbourCells } = require('../src/lib.js');
 
 describe("createInitialBoard", function() {
   it("should replace given position elements of board  with 'alive'", function() {
@@ -26,3 +14,34 @@ describe("createInitialBoard", function() {
     assert.deepEqual(createInitialBoard(3,[[0,0],[1,1],[2,2],[0,2]]), result);
   });
 });
+
+describe("findNeighbourCells", function() {
+  describe("for corner cells", function() {
+    it("should return three neibour cells", function() {
+      let result = [ [ 0, 1 ], [ 1, 0 ], [ 1, 1 ] ];
+      assert.deepEqual(findNeighbourCells(3,[0,0]),result);
+    });
+  });
+
+  describe("for edge cells", function() {
+    it("should return five neighbour cells", function() {
+      let result = [ [ 0, 0 ], [ 0, 2 ], [ 1, 0 ], [ 1, 1 ], [ 1, 2 ] ]; 
+      assert.deepEqual(findNeighbourCells(3,[0,1]), result);
+    });
+  });
+
+  describe("for middle cells", function() {
+    it("should return nine neighbour cells", function() {
+      let result = [ [ 1, 0 ],
+        [ 1, 2 ],
+        [ 0, 0 ],
+        [ 0, 1 ],
+        [ 0, 2 ],
+        [ 2, 0 ],
+        [ 2, 1 ],
+        [ 2, 2 ] ];
+      assert.deepEqual(findNeighbourCells(3,[1,1]), result);
+    });
+  });
+});
+

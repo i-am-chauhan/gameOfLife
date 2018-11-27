@@ -1,19 +1,27 @@
-const boardGenerator = function(size) {
-  let board = new Array(size).fill([]);
-  return board.map(element => new Array(size).fill("dead"));
-}
-
-const createAliveCells = function(cells) {
-  return function(position) {
-    cells[position[0]][position[1]] = "alive";
-    return cells;
-  }
-}
+const {
+  boardGenerator,
+  createAliveCells,
+  isRealNeighbour,
+  filterNeighbours } = require('./util.js');
 
 const createInitialBoard = function(size,aliveCells) {
   let emptyBoard = boardGenerator(size);
   aliveCells.map(createAliveCells(emptyBoard));
   return emptyBoard;
 }
-exports.boardGenerator = boardGenerator;
+
+const findNeighbourCells = function(size, cell) {
+  let neighbourCells = [ [cell[0], cell[1]-1], [cell[0],cell[1]+1] ];
+
+  neighbourCells.push([cell[0]-1, cell[1]-1]);
+  neighbourCells.push([cell[0]-1, cell[1]]);
+  neighbourCells.push([cell[0]-1, cell[1]+1]);
+  neighbourCells.push([cell[0]+1, cell[1]-1]);
+  neighbourCells.push([cell[0]+1, cell[1]]);
+  neighbourCells.push([cell[0]+1, cell[1]+1]);
+
+  return neighbourCells.filter(filterNeighbours(size));
+}
+
 exports.createInitialBoard = createInitialBoard;
+exports.findNeighbourCells = findNeighbourCells;
