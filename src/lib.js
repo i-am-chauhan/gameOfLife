@@ -76,8 +76,10 @@ const nextGenerationState = function(size,aliveCells, iteration) {
   return board;
 }
 
-console.log(nextGenerationState(5,[[2,2],[1,0],[3,4],[3,3],[3,1],[0,0],[2,0]],4));
 exports.createInitialBoard = createInitialBoard;
 exports.findNeighbourCells = findNeighbourCells;
 exports.getNeighbourCellState = getNeighbourCellState;
 exports.nextGenerationState = nextGenerationState;
+exports.canBeDead = canBeDead;
+exports.canBeAlive = canBeAlive;
+exports.isStateSame = isStateSame;

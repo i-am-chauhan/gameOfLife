@@ -3,7 +3,10 @@ const {
   createInitialBoard,
   findNeighbourCells,
   getNeighbourCellState,
-  nextGenerationState } = require('../src/lib.js');
+  nextGenerationState,
+  canBeAlive,
+  canBeDead,
+  isStateSame } = require('../src/lib.js');
 
 describe("createInitialBoard", function() {
   it("should replace given position elements of board  with 'alive'", function() {
@@ -114,11 +117,45 @@ describe("nextGenerationState", function() {
       let iterations = 4;
       let aliveCells =[[2,2],[1,0],[3,4],[3,3],[3,1],[0,0],[2,0]];
       let result = [ [ 'dead', 'dead', 'dead', 'dead', 'dead' ],
-  [ 'dead', 'dead', 'dead', 'dead', 'dead' ],
-  [ 'alive', 'alive', 'alive', 'dead', 'dead' ],
-  [ 'alive', 'alive', 'dead', 'dead', 'dead' ],
-  [ 'dead', 'dead', 'alive', 'dead', 'dead' ] ];
+        [ 'dead', 'dead', 'dead', 'dead', 'dead' ],
+        [ 'alive', 'alive', 'alive', 'dead', 'dead' ],
+        [ 'alive', 'alive', 'dead', 'dead', 'dead' ],
+        [ 'dead', 'dead', 'alive', 'dead', 'dead' ] ];
       assert.deepEqual(nextGenerationState(size,aliveCells,iterations),result);
+    });
+  });
+});
+
+describe("canBeAlive", function() {
+  describe("for exact three neighbour alive cells", function() {
+    it("should return true", function() {
+      let neighbourCellStates = { alive: [ 'alive', 'alive', 'alive' ], dead: [] };
+      assert.deepEqual(canBeAlive(neighbourCellStates),true);
+    });
+  });
+  
+  describe("for other than three neighbour alive cells", function() {
+    it("should return false", function() {
+      let neighbourCellStates = { alive: [ 'alive', 'alive' ], dead: [ 'dead' ] };
+      assert.deepEqual(canBeAlive(neighbourCellStates),false);
+    });
+  });
+});
+
+describe("canBeDead", function() {
+  describe("for less than two and more than three neighbour alive cells", function() {
+    it("should return true", function() {
+      let neighbourCellStates ={ alive: [ 'alive' ], dead: [ 'dead', 'dead' ] };
+      assert.deepEqual(canBeDead(neighbourCellStates),true);
+      neighbourCellStates = { alive: [ 'alive', 'alive', 'alive', 'alive' ], dead: [ 'dead' ] };
+      assert.deepEqual(canBeDead(neighbourCellStates),true);
+    });
+  });
+  
+  describe("for two or three neighbour alive cells", function() {
+    it("should return false", function() {
+      let neighbourCellStates = { alive: [ 'alive', 'alive', 'alive' ], dead: [] } ;
+      assert.deepEqual(canBeDead(neighbourCellStates),false);
     });
   });
 });
