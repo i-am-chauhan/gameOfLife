@@ -6,8 +6,7 @@ const {
 
 const createInitialBoard = function(size,aliveCells) {
   let emptyBoard = boardGenerator(size);
-  aliveCells.map(createAliveCells(emptyBoard));
-  return emptyBoard;
+  return aliveCells.reduce(createAliveCells, emptyBoard);
 }
 
 const findNeighbourCells = function(size, cell) {
@@ -32,9 +31,9 @@ const extractCellState = function(board) {
 }
 
 const getNeighbourCellState = function(size , board, cell) {
-    let cellState = { alive:[], dead:[]};
-    let neighbours = findNeighbourCells(size, cell);
-    return neighbours.reduce(extractCellState(board), cellState);
+  let cellState = { alive:[], dead:[]};
+  let neighbours = findNeighbourCells(size, cell);
+  return neighbours.reduce(extractCellState(board), cellState);
 }
 
 const canBeAlive = function(neighbourCellStates) {
@@ -70,7 +69,6 @@ const nextGenerationState = function(size,aliveCells, iteration) {
   let board = createInitialBoard(size,aliveCells);
   for(let counter = 0; counter < iteration; counter++) {
     let neighbourCells = getNeighbourCellState.bind(null,size,board)
-
     board = board.map(updateRow(neighbourCells));
   }
   return board;

@@ -3,11 +3,9 @@ const boardGenerator = function(size) {
   return board.map(element => new Array(size).fill("dead"));
 }
 
-const createAliveCells = function(cells) {
-  return function(position) {
-    cells[position[0]][position[1]] = "alive";
-    return cells;
-  }
+const createAliveCells = function(cells, position) {
+  cells[position[0]][position[1]] = "alive";
+  return cells;
 }
 
 const isRealNeighbour = function(size) {
