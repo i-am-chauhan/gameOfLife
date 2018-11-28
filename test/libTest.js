@@ -2,7 +2,8 @@ const assert = require('assert');
 const { 
   createInitialBoard,
   findNeighbourCells,
-  getNeighbourCellState } = require('../src/lib.js');
+  getNeighbourCellState,
+  nextGenerationState } = require('../src/lib.js');
 
 describe("createInitialBoard", function() {
   it("should replace given position elements of board  with 'alive'", function() {
@@ -54,7 +55,7 @@ describe("getNeighbourCellState", function() {
       let aliveCells = [[1,1],[1,0],[0,1]];
       let board = createInitialBoard(size,aliveCells);
       let result = { alive: [ 'alive', 'alive', 'alive' ], dead: [] }; 
-      assert.deepEqual(getNeighbourCellState(cell,size,board),result);
+      assert.deepEqual(getNeighbourCellState(size,board,cell),result);
     });
   });
 
@@ -65,7 +66,7 @@ describe("getNeighbourCellState", function() {
       let aliveCells = [[2,0],[2,1],[2,2]];
       let board = createInitialBoard(size,aliveCells);
       let result = { alive: [], dead: [ 'dead', 'dead', 'dead' ] }; 
-      assert.deepEqual(getNeighbourCellState(cell,size,board),result);
+      assert.deepEqual(getNeighbourCellState(size,board,cell),result);
     });
   });
 
@@ -77,9 +78,48 @@ describe("getNeighbourCellState", function() {
       let board = createInitialBoard(size,aliveCells);
       let result ={ alive: [ 'alive', 'alive', 'alive' ],
         dead: [ 'dead', 'dead', 'dead', 'dead', 'dead' ] };
-      assert.deepEqual(getNeighbourCellState(cell,size,board),result);
+      assert.deepEqual(getNeighbourCellState(size,board,cell),result);
     });
   });
 });
 
+describe("nextGenerationState", function() {
+  describe("for all alive cells and more than 2 iterations", function() {
+    it("should return board of same length with all dead cells", function() {
+      let size = 3;
+      let iterations = 3;
+      let aliveCells = [[0,0],[0,1],[0,2],[1,0],[1,1],[1,2],[2,0],[2,1],[2,2]];
+      let result = [ [ 'dead', 'dead', 'dead' ],
+        [ 'dead', 'dead', 'dead' ],
+        [ 'dead', 'dead', 'dead' ] ];
+      assert.deepEqual(nextGenerationState(size,aliveCells,iterations),result);
+    });
+  });
+
+  describe("for all dead cells", function() {
+    it("should return array same board after any number of iterations", function() {
+      let size = 3;
+      let iterations = 6;
+      let aliveCells = [];
+      let result = [ [ 'dead', 'dead', 'dead' ],
+        [ 'dead', 'dead', 'dead' ],
+        [ 'dead', 'dead', 'dead' ] ];
+      assert.deepEqual(nextGenerationState(size,aliveCells,iterations),result);
+    });
+  });
+
+  describe("for some dead and some alive cells", function() {
+    it("should return apropriate board after given iterations", function() {
+      let size = 5;
+      let iterations = 4;
+      let aliveCells =[[2,2],[1,0],[3,4],[3,3],[3,1],[0,0],[2,0]];
+      let result = [ [ 'dead', 'dead', 'dead', 'dead', 'dead' ],
+  [ 'dead', 'dead', 'dead', 'dead', 'dead' ],
+  [ 'alive', 'alive', 'alive', 'dead', 'dead' ],
+  [ 'alive', 'alive', 'dead', 'dead', 'dead' ],
+  [ 'dead', 'dead', 'alive', 'dead', 'dead' ] ];
+      assert.deepEqual(nextGenerationState(size,aliveCells,iterations),result);
+    });
+  });
+});
 

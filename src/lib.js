@@ -31,12 +31,53 @@ const extractCellState = function(board) {
   }
 }
 
-const getNeighbourCellState = function(cell, size , board) {
-  let cellState = { alive:[], dead:[]};
-  let neighbours = findNeighbourCells(size, cell);
-  return neighbours.reduce(extractCellState(board), cellState);
+const getNeighbourCellState = function(size , board, cell) {
+    let cellState = { alive:[], dead:[]};
+    let neighbours = findNeighbourCells(size, cell);
+    return neighbours.reduce(extractCellState(board), cellState);
 }
 
+const canBeAlive = function(neighbourCellStates) {
+  return neighbourCellStates["alive"].length == 3;
+}
+
+const canBeDead = function(neighbourCellStates) {
+  let aliveCount = neighbourCellStates["alive"].length;
+  return (aliveCount < 2 || aliveCount > 3);
+}
+
+const isStateSame = function(neighbourCellStates) {
+  return !canBeAlive(neighbourCellStates) && !canBeDead(neighbourCellStates);
+}
+
+const updateState = function(neighbourCells, index){
+  return function(initializer, cell, column){
+    let neighbourCellStates = neighbourCells([index, column]);
+    canBeAlive(neighbourCellStates) && initializer.push("alive");
+    canBeDead(neighbourCellStates) && initializer.push("dead");
+    isStateSame(neighbourCellStates) && initializer.push(cell);
+    return initializer;
+  }
+}
+
+const updateRow = function(neighbourCells){
+  return function(row , index) {
+    return row.reduce(updateState(neighbourCells,index),[]);
+  }
+}
+
+const nextGenerationState = function(size,aliveCells, iteration) {
+  let board = createInitialBoard(size,aliveCells);
+  for(let counter = 0; counter < iteration; counter++) {
+    let neighbourCells = getNeighbourCellState.bind(null,size,board)
+
+    board = board.map(updateRow(neighbourCells));
+  }
+  return board;
+}
+
+console.log(nextGenerationState(5,[[2,2],[1,0],[3,4],[3,3],[3,1],[0,0],[2,0]],4));
 exports.createInitialBoard = createInitialBoard;
 exports.findNeighbourCells = findNeighbourCells;
 exports.getNeighbourCellState = getNeighbourCellState;
+exports.nextGenerationState = nextGenerationState;
