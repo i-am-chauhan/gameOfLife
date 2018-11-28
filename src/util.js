@@ -12,10 +12,7 @@ const createAliveCells = function(cells) {
 
 const isRealNeighbour = function(size) {
   return function(index) {
-    if(index < 0 || index >= size) {
-      return false;
-    }
-    return true;
+    return !(index < 0 || index >= size);
   }
 }
 
